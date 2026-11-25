@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Crown &amp; Mane – Staff Portal</title>
+<style>
+:root{color-scheme:light;--bg:#f3f8f4;--card:#fff;--ink:#14261b;--mut:#5d7366;--gold:#1f7a4a;--line:#d5e4da;--red:#b3402f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,sans-serif}
+main{max-width:560px;margin:0 auto;padding:18px 14px 60px}
+h1{margin:0;font:700 26px Georgia,serif}h1 span{color:var(--gold)}
+.sub{color:var(--mut);font-size:14px;margin:2px 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:1.2px;color:var(--gold);margin:0 0 10px}
+input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:16px system-ui,sans-serif;margin-bottom:8px}
+.go{width:100%;padding:13px;border:0;border-radius:12px;background:var(--gold);color:#fff;font:600 16px system-ui,sans-serif}
+.go.alt{background:var(--ink)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tabs button{flex:1 1 auto;padding:9px 10px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font:14px system-ui,sans-serif}
+.tabs button.on{background:var(--ink);color:var(--bg)}
+.row{padding:10px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:14px}
+.row:last-child{border:0}
+.mut{color:var(--mut);font-size:13px}.err{color:var(--red);font-size:14px;margin-top:6px}
+.x{background:none;border:0;color:var(--red);font-size:13px;padding:6px}.x.g{color:var(--gold)}
+.nav{display:flex;gap:6px;margin-bottom:10px}.nav select,.nav input{flex:1;margin:0}
+.nav button{width:44px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.ch{font-size:11px;color:var(--mut);text-align:center}
+.cd{min-height:46px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);padding:3px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;font:12px system-ui,sans-serif}
+.cd.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.dn{font-weight:600}.dt{color:var(--gold);font-size:10px}
+.big{font:700 22px system-ui,sans-serif}
+.tag{font-size:11px;padding:2px 6px;border-radius:6px;background:var(--line);color:var(--mut);margin-left:6px}
+.tag.p{background:var(--gold);color:#fff}
+.hide{display:none}
+.foot{text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+<main>
+<h1>Crown <span>&amp;</span> Mane</h1>
+<p class="sub" id="who">Staff portal</p>
+
+<div id="login" class="card"><h2>Login</h2>
+<input id="em" type="email" placeholder="Email" autocomplete="username">
+<input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+<input id="ic" class="hide" placeholder="Invite code from your boss" autocapitalize="characters">
+<button class="go" id="in">Log in</button><div class="err" id="lerr"></div>
+<button class="x" id="mode" style="margin-top:8px;color:var(--mut)">New staff? Create account</button></div>
+
+<div id="app" class="hide">
+<div class="tabs" id="tabs"></div>
+
+<!-- SALES -->
+<div id="v-sales" class="hide">
+<div class="card"><h2>Record sale</h2>
+<select id="sb"></select><select id="ss"></select>
+<input id="sp" type="number" inputmode="numeric" placeholder="Price (KSh)">
+<div class="mut">Date</div><input id="sd" type="date">
+<div class="mut">Time paid</div><input id="st" type="time">
+<select id="pay"><option value="mpesa">M-Pesa</option><option value="cash">Cash</option></select>
+<input id="sm" maxlength="4" autocapitalize="characters" placeholder="Last 4 of M-Pesa code">
+<button class="go" id="sadd">Save sale</button><div class="err" id="serr"></div></div>
+<div class="card hide" id="mypay"><h2>My pay</h2><div id="mypayb"></div></div>
+<div class="card"><h2>Calendar</h2>
+<select id="sf" class="hide"></select>
+<div class="nav"><button id="cprev">◀</button><select id="cm"></select><select id="cy"></select><button id="cnext">▶</button></div>
+<div class="cal" id="cal"></div></div>
+<div class="card"><h2 id="mtitle">Month</h2><div id="msum"></div>
+<button class="go" id="exm" style="margin-top:10px">Export this month</button>
+<button class="go alt" id="exy" style="margin-top:8px">Export this year</button></div>
+<div class="card"><h2 id="dtitle">Day</h2><div id="dlist"></div></div>
+</div>
+
+<!-- REPORTS -->
+<div id="v-reports" class="hide">
+<div class="card"><h2>Totals</h2>
+<select id="rt"><option value="day">Daily</option><option value="week">Weekly (Mon–Sun)</option><option value="month">Monthly</option><option value="quarter">Quarterly</option><option value="half">Half-year</option><option value="year">Yearly</option></select>
+<div class="nav"><button id="rprev">◀</button><input id="rd" type="date"><button id="rnext">▶</button></div>
+<div class="mut" id="rlabel"></div></div>
+<div class="card"><div id="rbody"></div></div>
+</div>
+
+<!-- EXPENSES -->
+<div id="v-exp" class="hide">
+<div class="card"><h2>Add expense</h2>
+<input id="ed" type="date"><select id="ec"></select>
+<input id="edesc" placeholder="Details (optional)"><input id="ea" type="number" inputmode="decimal" placeholder="Amount (KSh)">
+<button class="go" id="eadd">Save expense</button><div class="err" id="eerr"></div></div>
+<div class="card"><h2 id="elabel">Expenses</h2>
+<div class="nav"><button id="eprev">◀</button><div style="flex:1"></div><button id="enext">▶</button></div>
+<div id="esum"></div><div id="elist"></div>
+<button class="go alt" id="eexp" style="margin-top:10px">Export this month</button></div>
+</div>
+
+<!-- PAY -->
+<div id="v-pay" class="hide">
+<div class="card"><h2>Weekly pay</h2>
+<div class="nav"><button id="pprev">◀</button><div style="flex:1;text-align:center" id="plabel"></div><button id="pnext">▶</button></div>
+<label class="mut" style="display:block;margin-bottom:10px"><input type="checkbox" id="pold" checked style="width:auto;margin:0 8px 0 0">Include earlier unpaid sales</label>
+<div id="pbody"></div></div>
+<div class="card"><h2>Payment history</h2><div id="phist"></div></div>
+</div>
+
+<!-- STAFF -->
+<div id="v-staff" class="hide">
+<div class="card"><h2>Add staff</h2><input id="fn" placeholder="Full name"><input id="fe" type="email" placeholder="Email (optional)"><input id="fr" type="number" inputmode="decimal" placeholder="Commission %" value="40">
+<button class="go" id="fadd">Add &amp; get invite code</button><div class="err" id="ferr"></div></div>
+<div class="card"><h2>Team</h2><div id="slist"></div></div>
+</div>
+
+<!-- SERVICES -->
+<div id="v-svc" class="hide">
+<div class="card"><h2>Add service</h2><input id="vn" placeholder="Service name"><input id="vp" type="number" inputmode="numeric" placeholder="Price (KSh)">
+<button class="go" id="vadd">Add service</button><div class="err" id="verr"></div></div>
+<div class="card"><h2>Services &amp; prices</h2><div id="vlist"></div></div>
+</div>
+</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+var SUPABASE_URL='https://riskqmfyvmzamgwmlnty.supabase.co';
+var SUPABASE_KEY='sb_publishable_zFQ_tYreX6UXM_IJUPYmMQ_TilhkUkC';
+var TZ='Africa/Nairobi',DAY=864e5;
+var sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+var me=null,shop=null,staffList=[],services=[],TAB='sales';
+var MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var CATS=['Rent','Electricity','Water','Products & supplies','Equipment','Transport','Airtime & internet','Marketing','Other'];
+function $(i){return document.getElementById(i)}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function pad(n){return (n<10?'0':'')+n}
+function ymd(ms){return new Date(ms).toLocaleDateString('en-CA',{timeZone:TZ})}
+function dkey(y,m,d){return y+'-'+pad(m+1)+'-'+pad(d)}
+function money(n){return 'KSh '+Math.round(+n).toLocaleString('en')}
+function short(n){n=+n;return n>=1000?(Math.round(n/100)/10)+'k':String(Math.round(n))}
+function nowT(){return new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:TZ})}
+function ptime(s){return new Date(s.paid_at||s.created_at).toLocaleTimeString('en',{hour:'numeric',minute:'2-digit',timeZone:TZ})}
+function row2(a,b,c){var r=el('div','row');r.appendChild(el('div',c||'',a));r.appendChild(el('div','',b));return r}
+function parseD(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2],12)}
+function fd(d){return dkey(d.getFullYear(),d.getMonth(),d.getDate())}
+function nice(s){return parseD(s).toLocaleDateString('en',{day:'numeric',month:'short',year:'numeric'})}
+function q(t){return '"'+String(t==null?'':t).replace(/"/g,'""')+'"'}
+function dl(name,lines){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+async function pull(table,cols,fn){var out=[],i=0;while(true){var r=await fn(sb.from(table).select(cols)).range(i,i+999);if(r.error)throw r.error;out=out.concat(r.data);if(r.data.length<1000)break;i+=1000}return out}
+function rangeOf(t,s){var d=parseD(s),y=d.getFullYear(),m=d.getMonth(),a,b;
+if(t=='day'){a=b=d}
+else if(t=='week'){var w=(d.getDay()+6)%7;a=new Date(y,m,d.getDate()-w,12);b=new Date(y,m,d.getDate()-w+6,12)}
+else if(t=='month'){a=new Date(y,m,1,12);b=new Date(y,m+1,0,12)}
+else if(t=='quarter'){var q0=Math.floor(m/3)*3;a=new Date(y,q0,1,12);b=new Date(y,q0+3,0,12)}
+else if(t=='half'){var h=m<6?0:6;a=new Date(y,h,1,12);b=new Date(y,h+6,0,12)}
+else{a=new Date(y,0,1,12);b=new Date(y,11,31,12)}
+return [fd(a),fd(b)]}
+function shift(t,s,dir){var d=parseD(s),y=d.getFullYear(),m=d.getMonth(),dd=d.getDate();
+var n={day:[0,0,1],week:[0,0,7],month:[0,1,0],quarter:[0,3,0],half:[0,6,0],year:[1,0,0]}[t];
+var day=(t=='day'||t=='week')?dd:1;
+return fd(new Date(y+dir*n[0],m+dir*n[1],day+dir*n[2],12))}
+function lbl(r){return r[0]==r[1]?nice(r[0]):nice(r[0])+' – '+nice(r[1])}
+async function loadStaff(){var r=await sb.from('staff').select('*').order('created_at');staffList=r.data||[]}
+async function loadServices(){var r=await sb.from('services').select('*').order('name');services=r.data||[]}
+function pname(id){var p=staffList.filter(function(x){return x.id==id})[0];return p?p.name:''}
+
+/* ---------- LOGIN ---------- */
+function show(on){$('login').classList.toggle('hide',on);$('app').classList.toggle('hide',!on);$('who').textContent=on?me.name+(me.role=='owner'?' · Owner':' · Staff'):'Staff portal'}
+var signup=false;
+$('mode').onclick=function(){signup=!signup;$('ic').classList.toggle('hide',!signup);$('in').textContent=signup?'Create account':'Log in';$('mode').textContent=signup?'Already have an account? Log in':'New staff? Create account'};
+$('in').onclick=async function(){
+$('lerr').textContent='';var em=$('em').value.trim(),pw=$('pw').value;
+if(signup){
+var c=$('ic').value.trim();
+if(!em||pw.length<6||!c){$('lerr').textContent='Enter your email, a password (6+ characters) and your invite code.';return}
+var u=await sb.auth.signUp({email:em,password:pw});
+if(u.error&&!/already/i.test(u.error.message)){$('lerr').textContent=u.error.message;return}
+var l=await sb.auth.signInWithPassword({email:em,password:pw});
+if(l.error){$('lerr').textContent='Could not log in. If this email already has an account, use its password.';return}
+var k=await sb.rpc('claim_staff',{p_code:c});
+if(k.data!='ok'){await sb.auth.signOut();$('lerr').textContent='That invite code is not valid or was already used.';return}
+boot();return}
+var r=await sb.auth.signInWithPassword({email:em,password:pw});
+if(r.error)$('lerr').textContent='Wrong email or password.';else boot()};
+async function logout(){await sb.auth.signOut();me=null;show(false)}
+async function boot(){
+var s=(await sb.auth.getSession()).data.session;
+if(!s){show(false);return}
+var r=await sb.from('staff').select('*').eq('user_id',s.user.id).eq('active',true).maybeSingle();
+if(!r.data){await sb.auth.signOut();show(false);$('lerr').textContent='No staff access on this account. Tap "New staff?" and use your invite code.';return}
+me=r.data;var sh=await sb.from('shops').select('*').limit(1);shop=sh.data&&sh.data[0];
+show(true);salesInit=false;go('sales')}
+var VIEWS=['sales','reports','exp','pay','staff','svc'];
+var TABS=[['sales','Sales'],['reports','Totals',1],['exp','Expenses',1],['pay','Pay',1],['staff','Staff',1],['svc','Services',1]];
+function buildTabs(){var t=$('tabs');t.textContent='';TABS.forEach(function(x){if(x[2]&&me.role!='owner')return;var b=el('button',x[0]==TAB?'on':'',x[1]);b.onclick=function(){go(x[0])};t.appendChild(b)});var o=el('button','','Log out');o.onclick=logout;t.appendChild(o)}
+function go(t){TAB=t;buildTabs();VIEWS.forEach(function(v){$('v-'+v).classList.toggle('hide',v!=t)});({sales:initSales,reports:initReports,exp:initExp,pay:initPay,staff:renderStaff,svc:renderSvc})[t]()}
+
+/* ---------- SALES ---------- */
+var cur={y:0,m:0},selDay=null,days={},salesInit=false;
+async function initSales(){
+await loadServices();await loadStaff();
+var own=me.role=='owner';
+if(!salesInit){salesInit=true;
+var t=ymd(Date.now()).split('-');cur.y=+t[0];cur.m=+t[1]-1;selDay=ymd(Date.now());
+$('sd').value=selDay;$('st').value=nowT();
+$('cm').textContent='';MN.forEach(function(n,i){var o=el('option','',n);o.value=i;$('cm').appendChild(o)});
+$('cy').textContent='';for(var y=2026;y<=2045;y++){var o=el('option','',y);o.value=y;$('cy').appendChild(o)}
+if(!own){$('sd').min=ymd(Date.now()-7*DAY);$('sd').max=ymd(Date.now())}}
+$('sb').textContent='';$('sb').classList.toggle('hide',!own);$('sf').classList.toggle('hide',!own);
+staffList.filter(function(x){return x.active}).forEach(function(x){var o=el('option','',x.name);o.value=x.id;$('sb').appendChild(o)});
+$('ss').textContent='';services.filter(function(s){return s.active}).forEach(function(s){var o=el('option','',s.name+(s.price?' · '+s.price:''));o.value=s.id;$('ss').appendChild(o)});
+$('ss').onchange=function(){var s=services.filter(function(x){return x.id==$('ss').value})[0];$('sp').value=s&&s.price?s.price:''};$('ss').onchange();
+if(own){var keep=$('sf').value;$('sf').textContent='';var o0=el('option','','Everyone');o0.value='';$('sf').appendChild(o0);staffList.forEach(function(x){var o=el('option','',x.name);o.value=x.id;$('sf').appendChild(o)});$('sf').value=keep}
+$('mypay').classList.toggle('hide',own);
+await loadMonth()}
+$('sf').onchange=function(){loadMonth()};
+$('cm').onchange=function(){cur.m=+$('cm').value;loadMonth()};$('cy').onchange=function(){cur.y=+$('cy').value;loadMonth()};
+$('cprev').onclick=function(){cur.m--;if(cur.m<0){cur.m=11;cur.y--}loadMonth()};
+$('cnext').onclick=function(){cur.m++;if(cur.m>11){cur.m=0;cur.y++}loadMonth()};
+async function loadMonth(){
+var last=new Date(cur.y,cur.m+1,0).getDate(),f=$('sf').value||null;
+var r=await sb.rpc('daily_totals',{p_from:dkey(cur.y,cur.m,1),p_to:dkey(cur.y,cur.m,last),p_staff:f});
+days={};(r.data||[]).forEach(function(x){days[x.day]=x});
+renderCal();await summary(f);await dayList();if(me.role!='owner')await myPay()}
+function renderCal(){
+$('cm').value=cur.m;$('cy').value=cur.y;
+var c=$('cal');c.textContent='';
+['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(function(d){c.appendChild(el('div','ch',d))});
+var lead=(new Date(cur.y,cur.m,1).getDay()+6)%7,n=new Date(cur.y,cur.m+1,0).getDate();
+for(var i=0;i<lead;i++)c.appendChild(el('div'));
+for(var d=1;d<=n;d++){(function(d){var k=dkey(cur.y,cur.m,d),b=el('button','cd'+(k==selDay?' on':''));b.appendChild(el('span','dn',d));if(days[k])b.appendChild(el('span','dt',short(days[k].total)));b.onclick=function(){selDay=k;$('sd').value=k;renderCal();dayList()};c.appendChild(b)})(d)}}
+async function summary(f){
+$('mtitle').textContent=MN[cur.m]+' '+cur.y;
+var t=0,cm=0,n=0;Object.keys(days).forEach(function(k){t+=+days[k].total;cm+=+days[k].commission;n+=+days[k].n});
+var l=$('msum');l.textContent='';
+l.appendChild(row2('Sales ('+n+')',money(t)));
+l.appendChild(row2(me.role=='owner'?'Commission owed':'My commission',money(cm)));
+if(me.role=='owner'){l.appendChild(row2('Shop keeps',money(t-cm)));
+if(!f){var r=await sb.rpc('period_report',{p_from:dkey(cur.y,cur.m,1),p_to:dkey(cur.y,cur.m,new Date(cur.y,cur.m+1,0).getDate())});
+((r.data&&r.data.by_staff)||[]).forEach(function(s){l.appendChild(row2(s.staff_name+' · '+s.n+' sales',money(s.sales)+' → '+money(s.commission),'mut'))})}}}
+async function dayList(){
+var l=$('dlist');l.textContent='';
+$('dtitle').textContent=parseD(selDay).toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+var f=$('sf').value,qq=sb.from('sales').select('*').eq('sale_date',selDay).order('paid_at');if(f)qq=qq.eq('staff_id',f);
+var r=await qq;var d=r.data||[];
+if(!d.length){l.appendChild(el('div','mut','No sales on this day.'));return}
+d.forEach(function(s){var row=el('div','row');var L=el('div');
+var a=el('div','',ptime(s)+' · '+s.service_name+' · '+money(s.price));a.appendChild(el('span','tag'+(s.payout_id?' p':''),s.payout_id?'Paid out':'Unpaid'));L.appendChild(a);
+L.appendChild(el('div','mut',s.staff_name+' · commission '+money(s.commission_amount)+' · '+(s.pay_method=='cash'?'Cash':'M-Pesa '+(s.mpesa_last4||''))));
+row.appendChild(L);
+if(me.role=='owner'&&!s.payout_id){var x=el('button','x','Delete');x.onclick=async function(){if(!confirm('Delete this sale?'))return;await sb.from('sales').delete().eq('id',s.id);loadMonth()};row.appendChild(x)}
+l.appendChild(row)})}
+async function myPay(){
+var b=$('mypayb');b.textContent='';
+var u=await sb.from('sales').select('commission_amount').is('payout_id',null).limit(1000);
+var tot=0;(u.data||[]).forEach(function(s){tot+=+s.commission_amount});
+b.appendChild(row2('Unpaid commission',money(tot),'big'));
+var p=await sb.from('payouts').select('*').order('paid_at',{ascending:false}).limit(8);
+(p.data||[]).forEach(function(x){b.appendChild(row2('Paid '+nice(ymd(Date.parse(x.paid_at)))+' · '+x.sales_count+' sales',money(x.commission_amount),'mut'))})}
+$('sadd').onclick=async function(){
+$('serr').textContent='';
+var sid=me.role=='owner'?$('sb').value:me.id,s=services.filter(function(x){return x.id==$('ss').value})[0],p=parseInt($('sp').value,10),d=$('sd').value;
+if(!sid||!s||!(p>0)||!d){$('serr').textContent='Choose staff, service, price and date.';return}
+var pm=$('pay').value,m4=$('sm').value.trim().toUpperCase();
+if(pm=='mpesa'&&!/^[A-Z0-9]{4}$/.test(m4)){$('serr').textContent='Enter the last 4 letters/numbers of the M-Pesa code.';return}
+var tm=$('st').value||nowT(),pa=new Date(Date.parse(d+'T'+tm+':00+03:00')).toISOString();
+var r=await sb.from('sales').insert({staff_id:sid,service_name:s.name,price:p,sale_date:d,paid_at:pa,pay_method:pm,mpesa_last4:pm=='mpesa'?m4:null});
+if(r.error){$('serr').textContent=/7 days/.test(r.error.message)?'You can only record sales from the last 7 days.':'Could not save. Check the details and try again.';return}
+var t=d.split('-');cur.y=+t[0];cur.m=+t[1]-1;selDay=d;$('sp').value=s.price||'';$('st').value=nowT();$('sm').value='';await loadMonth()};
+function saleLines(rows){var o=[['Date','Time paid','Staff','Service','Price','Commission %','Commission','Payment','Paid out'].join(',')];rows.forEach(function(s){o.push([s.sale_date,q(ptime(s)),q(s.staff_name),q(s.service_name),s.price,s.commission_rate,s.commission_amount,q(s.pay_method=='cash'?'Cash':'M-Pesa '+(s.mpesa_last4||'')),s.payout_id?'Yes':'No'].join(','))});return o}
+async function exportSales(from,to,name,btn){var t=btn.textContent;btn.textContent='Preparing…';var f=$('sf').value;
+try{var rows=await pull('sales','*',function(x){x=x.gte('sale_date',from).lte('sale_date',to);if(f)x=x.eq('staff_id',f);return x.order('sale_date').order('id')});dl(name,saleLines(rows))}catch(e){alert('Export failed')}btn.textContent=t}
+$('exm').onclick=function(){exportSales(dkey(cur.y,cur.m,1),dkey(cur.y,cur.m,new Date(cur.y,cur.m+1,0).getDate()),'sales-'+cur.y+'-'+pad(cur.m+1)+'.csv',$('exm'))};
+$('exy').onclick=function(){exportSales(cur.y+'-01-01',cur.y+'-12-31','sales-'+cur.y+'.csv',$('exy'))};
+
+/* ---------- TOTALS ---------- */
+var rp={t:'month',d:null};
+async function initReports(){if(!rp.d)rp.d=ymd(Date.now());$('rt').value=rp.t;$('rd').value=rp.d;await runReport()}
+$('rt').onchange=function(){rp.t=$('rt').value;runReport()};
+$('rd').onchange=function(){if($('rd').value){rp.d=$('rd').value;runReport()}};
+$('rprev').onclick=function(){rp.d=shift(rp.t,rp.d,-1);$('rd').value=rp.d;runReport()};
+$('rnext').onclick=function(){rp.d=shift(rp.t,rp.d,1);$('rd').value=rp.d;runReport()};
+async function runReport(){
+var r0=rangeOf(rp.t,rp.d);$('rlabel').textContent=lbl(r0);
+var b=$('rbody');b.textContent='Loading…';
+var r=await sb.rpc('period_report',{p_from:r0[0],p_to:r0[1]});
+b.textContent='';if(r.error||!r.data){b.appendChild(el('div','err','Could not load.'));return}
+var d=r.data,tot=+d.commission_total+ +d.expenses_total,net=+d.sales_total-tot;
+b.appendChild(row2('Total sales ('+d.sales_count+')',money(d.sales_total),'big'));
+b.appendChild(row2('Staff commission',money(d.commission_total)));
+b.appendChild(row2('Other expenses',money(d.expenses_total)));
+b.appendChild(row2('Total expenses',money(tot),'big'));
+b.appendChild(row2('Net profit',money(net),'big'));
+if((d.by_staff||[]).length){b.appendChild(el('h2','','By staff'));b.lastChild.style.marginTop='14px';d.by_staff.forEach(function(s){b.appendChild(row2(s.staff_name+' · '+s.n+' sales',money(s.sales)+' → '+money(s.commission),'mut'))})}
+if((d.by_category||[]).length){var h=el('h2','','Expenses by type');h.style.marginTop='14px';b.appendChild(h);d.by_category.forEach(function(c){b.appendChild(row2(c.category,money(c.amount),'mut'))})}}
+
+/* ---------- EXPENSES ---------- */
+var ex={y:0,m:0},exRows=[],exInit=false;
+async function initExp(){
+if(!exInit){exInit=true;var t=ymd(Date.now()).split('-');ex.y=+t[0];ex.m=+t[1]-1;$('ec').textContent='';CATS.forEach(function(c){var o=el('option','',c);o.value=c;$('ec').appendChild(o)})}
+$('ed').value=ymd(Date.now());await loadExp()}
+async function loadExp(){
+$('elabel').textContent=MN[ex.m]+' '+ex.y;
+var from=dkey(ex.y,ex.m,1),to=dkey(ex.y,ex.m,new Date(ex.y,ex.m+1,0).getDate());
+try{exRows=await pull('expenses','*',function(x){return x.gte('expense_date',from).lte('expense_date',to).order('expense_date',{ascending:false}).order('id')})}catch(e){exRows=[]}
+var tot=0,by={};exRows.forEach(function(e){tot+=+e.amount;by[e.category]=(by[e.category]||0)+ +e.amount});
+var s=$('esum');s.textContent='';s.appendChild(row2('Total listed expenses',money(tot),'big'));
+Object.keys(by).forEach(function(k){s.appendChild(row2(k,money(by[k]),'mut'))});
+var l=$('elist');l.textContent='';
+if(!exRows.length){l.appendChild(el('div','mut','No expenses this month.'));return}
+exRows.forEach(function(e){var r=el('div','row');var L=el('div');L.appendChild(el('div','',nice(e.expense_date)+' · '+e.category));if(e.description)L.appendChild(el('div','mut',e.description));
+var R=el('div');R.style.cssText='display:flex;align-items:center;gap:6px';R.appendChild(el('span','',money(e.amount)));
+var x=el('button','x','Delete');x.onclick=async function(){if(!confirm('Delete this expense?'))return;await sb.from('expenses').delete().eq('id',e.id);loadExp()};R.appendChild(x);r.appendChild(L);r.appendChild(R);l.appendChild(r)})}
+$('eprev').onclick=function(){ex.m--;if(ex.m<0){ex.m=11;ex.y--}loadExp()};
+$('enext').onclick=function(){ex.m++;if(ex.m>11){ex.m=0;ex.y++}loadExp()};
+$('eadd').onclick=async function(){
+$('eerr').textContent='';var a=parseFloat($('ea').value),d=$('ed').value;
+if(!(a>0)||!d){$('eerr').textContent='Enter a date and an amount.';return}
+var r=await sb.from('expenses').insert({shop_id:shop.id,expense_date:d,category:$('ec').value,description:$('edesc').value.trim()||null,amount:a});
+if(r.error){$('eerr').textContent='Could not save.';return}
+$('ea').value='';$('edesc').value='';var t=d.split('-');ex.y=+t[0];ex.m=+t[1]-1;loadExp()};
+$('eexp').onclick=function(){var o=['Date,Category,Details,Amount'];exRows.forEach(function(e){o.push([e.expense_date,q(e.category),q(e.description),e.amount].join(','))});dl('expenses-'+ex.y+'-'+pad(ex.m+1)+'.csv',o)};
+
+/* ---------- PAY ---------- */
+var pw={d:null};
+async function initPay(){if(!pw.d)pw.d=ymd(Date.now());await loadPay()}
+$('pprev').onclick=function(){pw.d=shift('week',pw.d,-1);loadPay()};
+$('pnext').onclick=function(){pw.d=shift('week',pw.d,1);loadPay()};
+$('pold').onchange=function(){loadPay()};
+async function loadPay(){
+var r0=rangeOf('week',pw.d),from=$('pold').checked?'2000-01-01':r0[0],to=r0[1];
+$('plabel').textContent='Week: '+lbl(r0);
+var b=$('pbody');b.textContent='Loading…';
+var rows=[];try{rows=await pull('sales','staff_id,staff_name,sale_date,price,commission_amount',function(x){return x.is('payout_id',null).gte('sale_date',from).lte('sale_date',to).order('sale_date').order('id')})}catch(e){b.textContent='Could not load.';return}
+var g={};rows.forEach(function(s){var k=s.staff_id||'x';var o=g[k]||(g[k]={id:s.staff_id,name:s.staff_name,n:0,sales:0,com:0,min:s.sale_date});o.n++;o.sales+=s.price;o.com+=+s.commission_amount;if(s.sale_date<o.min)o.min=s.sale_date});
+var list=Object.keys(g).map(function(k){return g[k]}).filter(function(x){return x.id});
+b.textContent='';
+if(!list.length){b.appendChild(el('div','mut','Nothing unpaid for this week.'))}
+var all=0;list.forEach(function(p){all+=p.com;var r=el('div','row');var L=el('div');L.appendChild(el('div','',p.name));L.appendChild(el('div','mut',p.n+' sales · '+money(p.sales)));
+var R=el('div');R.style.cssText='display:flex;align-items:center;gap:8px';R.appendChild(el('strong','',money(p.com)));
+var bt=el('button','x g','Pay');bt.onclick=async function(){if(!confirm('Pay '+p.name+' '+money(p.com)+'? This marks their sales as paid and emails them.'))return;bt.disabled=true;var q2=await sb.rpc('pay_staff',{p_staff:p.id,p_from:p.min,p_to:to});if(q2.error){alert('Could not pay: '+q2.error.message);}loadPay()};
+R.appendChild(bt);r.appendChild(L);r.appendChild(R);b.appendChild(r)});
+if(list.length>1){var pa=el('button','go','Pay everyone · '+money(all));pa.style.marginTop='12px';pa.onclick=async function(){if(!confirm('Pay all '+list.length+' staff a total of '+money(all)+'? Each person is emailed.'))return;pa.disabled=true;pa.textContent='Paying…';var bad=0;for(var i=0;i<list.length;i++){var q2=await sb.rpc('pay_staff',{p_staff:list[i].id,p_from:list[i].min,p_to:to});if(q2.error)bad++}if(bad)alert(bad+' payment(s) failed. Try again.');loadPay()};b.appendChild(pa)}
+var h=await sb.from('payouts').select('*').order('paid_at',{ascending:false}).limit(40);
+var hl=$('phist');hl.textContent='';
+if(!(h.data||[]).length)hl.appendChild(el('div','mut','No payments yet.'));
+(h.data||[]).forEach(function(x){hl.appendChild(row2(x.staff_name+' · '+nice(ymd(Date.parse(x.paid_at)))+' · '+x.sales_count+' sales',money(x.commission_amount)))})}
+
+/* ---------- STAFF ---------- */
+function newCode(){var a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',o='',v=new Uint8Array(8);crypto.getRandomValues(v);for(var i=0;i<8;i++)o+=a[v[i]%a.length];return o}
+async function renderStaff(){
+await loadStaff();var s=(await sb.auth.getSession()).data.session,l=$('slist');l.textContent='';
+staffList.forEach(function(p){
+var self=s&&p.user_id==s.user.id;
+var r=el('div','row');r.style.alignItems='flex-start';var L=el('div');
+L.appendChild(el('div','',p.name+(p.role=='owner'?' (owner)':'')+(p.active?'':' · removed')));
+L.appendChild(el('div','mut',p.user_id?'Login active':(p.invite_code?'Invite code: '+p.invite_code:'No login yet')));
+if(!p.user_id&&p.invite_code&&p.active){var sh=el('button','x g','Send code on WhatsApp');sh.onclick=function(){var t='Hi '+p.name+', open '+location.origin+location.pathname+' on your phone, tap New staff? Create account, and use this invite code: '+p.invite_code;window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')};L.appendChild(sh)}
+var w=el('div');w.style.cssText='display:flex;flex-direction:column;align-items:flex-end;gap:4px';
+var i=document.createElement('input');i.type='number';i.step='any';i.style.cssText='width:76px;margin:0';i.value=p.commission_rate;
+var sv=el('button','x g','Save %');sv.onclick=async function(){var v=parseFloat(i.value);if(!(v>=0&&v<=100)){alert('Enter 0 to 100');return}var q2=await sb.from('staff').update({commission_rate:v}).eq('id',p.id);sv.textContent=q2.error?'Failed':'Saved'};
+var top=el('div');top.style.cssText='display:flex;gap:4px;align-items:center';top.appendChild(i);top.appendChild(sv);w.appendChild(top);
+if(!self){
+var ro=el('button','x g',p.role=='owner'?'Make staff':'Make owner');ro.onclick=async function(){if(!confirm((p.role=='owner'?'Make '+p.name+' a normal staff member?':'Give '+p.name+' full owner access?')))return;await sb.from('staff').update({role:p.role=='owner'?'staff':'owner'}).eq('id',p.id);renderStaff()};w.appendChild(ro);
+var rm=el('button','x',p.active?'Remove':'Restore');rm.onclick=async function(){if(p.active&&!confirm('Remove '+p.name+'? Their past sales stay saved.'))return;await sb.from('staff').update({active:!p.active}).eq('id',p.id);renderStaff()};w.appendChild(rm)}
+r.appendChild(L);r.appendChild(w);l.appendChild(r)})}
+$('fadd').onclick=async function(){
+$('ferr').textContent='';var n=$('fn').value.trim(),rt=parseFloat($('fr').value);
+if(n.length<2||!(rt>=0&&rt<=100)){$('ferr').textContent='Enter a name and a commission from 0 to 100.';return}
+var r=await sb.from('staff').insert({shop_id:shop.id,name:n,email:$('fe').value.trim()||null,commission_rate:rt,invite_code:newCode()});
+if(r.error){$('ferr').textContent='Could not add.';return}
+$('fn').value='';$('fe').value='';renderStaff()};
+
+/* ---------- SERVICES ---------- */
+async function renderSvc(){
+await loadServices();var l=$('vlist');l.textContent='';
+services.forEach(function(s){var r=el('div','row');r.appendChild(el('div','',s.name+(s.active?'':' · hidden')));
+var w=el('div');w.style.cssText='display:flex;gap:4px;align-items:center';
+var i=document.createElement('input');i.type='number';i.style.cssText='width:84px;margin:0';i.value=s.price==null?'':s.price;
+var sv=el('button','x g','Save');sv.onclick=async function(){var v=parseInt(i.value,10);var q2=await sb.from('services').update({price:v>0?v:null}).eq('id',s.id);sv.textContent=q2.error?'Failed':'Saved'};
+var hd=el('button','x',s.active?'Hide':'Restore');hd.onclick=async function(){await sb.from('services').update({active:!s.active}).eq('id',s.id);renderSvc()};
+w.appendChild(i);w.appendChild(sv);w.appendChild(hd);r.appendChild(w);l.appendChild(r)})}
+$('vadd').onclick=async function(){
+$('verr').textContent='';var n=$('vn').value.trim(),p=parseInt($('vp').value,10);
+if(n.length<2){$('verr').textContent='Enter a service name.';return}
+var r=await sb.from('services').insert({shop_id:shop.id,name:n,price:p>0?p:null});
+if(r.error){$('verr').textContent='Could not add.';return}
+$('vn').value='';$('vp').value='';renderSvc()};
+
+boot();
+</script>
+</body>
+</html>
